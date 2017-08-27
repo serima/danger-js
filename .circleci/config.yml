@@ -1,0 +1,20 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/danger-js
+    docker:
+      - image: node:7
+    steps:
+      - checkout
+      - restore_cache:
+          key: yarn-{{ .Branch }}-{{ checksum "yarn.lock" }}
+      - run:
+          name: Install dependencies
+          command: yarn add danger
+      - save_cache:
+          key: yarn-{{ .Branch }}-{{ checksum "yarn.lock" }}
+          paths:
+            - .cache/yarn
+      - run:
+          name: test
+          command: yarn danger -- run --dangerfile dangerfile.circle.js --text-only
