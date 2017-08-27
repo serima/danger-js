@@ -9,12 +9,20 @@ jobs:
       - restore_cache:
           key: yarn-{{ .Branch }}-{{ checksum "yarn.lock" }}
       - run:
+          name: System information
+          command: |
+            echo "Node $(node -v)"
+            echo "Yarn v$(yarn --version)"
+      - run:
           name: Install dependencies
-          command: yarn add danger
+          command: |
+            yarn
+            yarn add danger
       - save_cache:
           key: yarn-{{ .Branch }}-{{ checksum "yarn.lock" }}
           paths:
-            - .cache/yarn
+            - ~/danger-js/node_modules
+            - ~/.cache/yarn/
       - run:
           name: test
           command: yarn danger -- run --dangerfile dangerfile.circle.js --text-only
